@@ -1,3 +1,6 @@
+Please first read the whole documentation.
+The documentation is based on software engineering documentation, e.g., ARC42, Test-Scripts, etc..
+
 The program can run when:
 
 1. A stable MySQL connection on port:3306 should exist.
