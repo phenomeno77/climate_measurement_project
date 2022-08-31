@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xml:lang="en">
+
+    <body>
+        <ui:composition>
+
+            <div>
+                <h:form>
+                    <p:menu toggleable="true" style="border-color: transparent;" rendered="#{sessionInfoBean.loggedIn}">
+                        <p:menuitem value="#{sessionInfoBean.hasRole('MANAGER') ? 'Departments Dashboard'
+                          : sessionInfoBean.hasRole('EMPLOYEE') ? 'My Dashboard'
+                          : 'Global Dashboard'}" url="/secured/dashboard.xhtml" icon="pi pi-globe" rendered="#{sessionInfoBean.loggedIn}"/>
+                        <p:menuitem value="User Management" url="/users/users.xhtml" icon="pi pi-users" rendered="#{sessionInfoBean.hasRole('MANAGER') || sessionInfoBean.hasRole('ADMIN') || sessionInfoBean.hasRole('FACILITY_MANAGER')}" />
+                        <p:submenu label="Room Management" rendered="#{sessionInfoBean.hasRole('ADMIN') || sessionInfoBean.hasRole('FACILITY_MANAGER')}">
+                            <p:menuitem value="Sensors" url="/sensors/sensors.xhtml" icon="pi pi-circle-off" rendered="#{sessionInfoBean.hasRole('ADMIN') || sessionInfoBean.hasRole('FACILITY_MANAGER')}" style="margin-left:20px;"/>
+                            <p:menuitem value="Rooms" url="/rooms/rooms.xhtml" icon="pi pi-map" style="margin-left:20px;"/>
+                        </p:submenu>
+                        <p:menuitem value="Settings" url="/settings.xhtml" icon="pi pi-cog" rendered="#{sessionInfoBean.loggedIn}"/>
+                        <p:menuitem value="Audit Logs" url="/auditLog/auditLog.xhtml" icon="pi pi-file-o" rendered="#{not sessionInfoBean.hasRole('EMPLOYEE')}"/>
+                    </p:menu>
+                </h:form>
+            </div>
+
+        </ui:composition>
+    </body>
+</html>
+

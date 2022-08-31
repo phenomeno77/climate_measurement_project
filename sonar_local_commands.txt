@@ -1,0 +1,3 @@
+mvn validate
+mvn -Dsonar.projectKey=SEPSSS22_G1T2 -Dsonar.projectName="g1t2" -Dsonar.login=45f34ba9fde0e9206bfa041ca2436effe83341e8 -Dsonar.host.url=https://qe-sonarqube.uibk.ac.at  --fail-at-end validate
+mvn -Dsonar.projectKey=SEPSSS22_G1T2 -Dsonar.projectName="g1t2" -Dsonar.login=45f34ba9fde0e9206bfa041ca2436effe83341e8 -Dsonar.host.url=https://qe-sonarqube.uibk.ac.at sonar:sonar

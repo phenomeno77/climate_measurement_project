@@ -1,0 +1,300 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/main.xhtml">
+
+    <ui:define name="content">
+
+        <h:form id="overview">
+            <p:panel header="">
+                <f:facet name="actions">
+                    <p:menuButton value="Test-Data Initialize" style="margin-left: 10px;">
+                        <p:menuitem value="One Day (24 Hours)" action="#{measurementDataInitializer.selectDayInterval(1)}"
+                                    onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" update="@parent">
+                            <p:confirm header="Confirmation" message="By submitting that button, test data will be initialized for one month
+                                for the current logged in user. Test data will be initialized for each public room and office for the department of the user.
+                                If the corresponding office does not visit the rules for saving measurement data, then the data wont be initialized.
+                                Rules: 1) There exist a Sensor in that room 2) There are at the moment five or more present users in the office or no users(zero).
+                                That action may take some time to initialize all the data, so please be patient."
+                                       icon="ui-icon-alert"/>
+                        </p:menuitem>
+                        <p:menuitem value="One Week (168 Hours)" action="#{measurementDataInitializer.selectDayInterval(7)}"
+                                    onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" update="@parent">
+                            <p:confirm header="Confirmation" message="By submitting that button, test data will be initialized for one month
+                                for the current logged in user. Test data will be initialized for each public room and office for the department of the user.
+                                If the corresponding office does not visit the rules for saving measurement data, then the data wont be initialized.
+                                Rules: 1) There exist a Sensor in that room 2) There are at the moment five or more present users in the office or no users(zero).
+                                That action may take some time to initialize all the data, so please be patient."
+                                       icon="ui-icon-alert"/>
+                        </p:menuitem>
+                        <p:menuitem value="One Month (720 Hours)" action="#{measurementDataInitializer.selectDayInterval(30)}"
+                                    onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" update="@parent">
+                            <p:confirm header="Confirmation" message="By submitting that button, test data will be initialized for one month
+                                for the current logged in user. Test data will be initialized for each public room and office for the department of the user.
+                                If the corresponding office does not visit the rules for saving measurement data, then the data wont be initialized.
+                                Rules: 1) There exist a Sensor in that room 2) There are at the moment five or more present users in the office or no users(zero).
+                                That action may take some time to initialize all the data, so please be patient."
+                                       icon="ui-icon-alert"/>
+                        </p:menuitem>
+                    </p:menuButton>
+                </f:facet>
+                <p:tabView >
+
+                    <p:tab title="Daily-Frequency" id="dashboard">
+                        <p:tabView>
+                            <p:tab title="&#8709;">
+                                <p:repeat value="#{sessionInfoBean.hasRole('MANAGER') ? measurementListController.doGetAllMeasurementsAllRoomsByDepartment('DAILY')
+                                : sessionInfoBean.hasRole('EMPLOYEE') ? measurementListController.doGetEmployeeReport('DAILY')
+                                : measurementListController.doGetAllMeasurementsAllRooms('DAILY')}" var="room">
+                                    <p:card style="margin-top: 10px; height: 200px;">
+                                        <h:outputText value="#{room.key.roomName} &lt;br/&gt;&lt;br/&gt;" escape="false"/>
+
+                                        <div style="margin-bottom: 20px; float: left; width: 33.33%">
+
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.temperature} °C &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Temperature&lt;br/&gt;&lt;br/&gt;" escape="false"/>
+
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.lux} lux &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Light Intensity&lt;br/&gt;" escape="false"/>
+                                        </div>
+                                        <div style="margin-bottom: 20px; float: left; width: 33.33%">
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.humidity} % &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Humidity&lt;br/&gt;&lt;br/&gt;" escape="false"/>
+
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.gas} ppm &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Air Quality&lt;br/&gt;" escape="false"/>
+                                        </div>
+                                        <div style="margin-bottom: 20px; float: left; width: 33.33%">
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.decibel} db &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Noise&lt;br/&gt;&lt;br/&gt;" escape="false"/>
+
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.pressure} mbar &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Pressure&lt;br/&gt;" escape="false"/>
+                                        </div>
+
+                                    </p:card>
+                                </p:repeat>
+
+                            </p:tab>
+                            <p:tab title="Diagram">
+                                <div class="card">
+                                    <p:repeat value="#{sessionInfoBean.hasRole('MANAGER') ? graphController.createGraphAllRoomsByDepartment('DAILY')
+                                                            : sessionInfoBean.hasRole('EMPLOYEE') ? graphController.createGraphUserRoomsByInterval('DAILY')
+                                                            : graphController.createGraphAllRooms('DAILY')}" var="publicRoom">
+                                        <p:lineChart model="#{publicRoom}" style="width: 100%; height: 500px;"/>
+                                    </p:repeat>
+                                </div>
+
+                            </p:tab>
+                            <p:tab title="Measured Data">
+                                <p:dataTable id="measurementTable" var="measurement"
+                                             value="#{sessionInfoBean.hasRole('MANAGER') ? measurementListController.doGetAllMeasurementsByDepartment('DAILY')
+                                                        :sessionInfoBean.hasRole('EMPLOYEE') ? measurementListController.doGetUsersReport('DAILY')
+                                                        :measurementListController.doGetAllMeasurements('DAILY')}"
+                                             paginator="true"
+                                             rows="20" paginatorPosition="bottom"
+                                             emptyMessage="No measurements found." sortMode="multiple">
+                                    <p:column headerText="Room" sortBy="#{measurement.sensor.room.roomName}" filterBy="#{measurement.sensor.room.roomName}" filterMatchMode="contains">
+                                        <h:outputText value="#{measurement.sensor.room.roomName}"/>
+                                    </p:column>
+                                    <p:column headerText="Sensor" sortBy="#{measurement.sensor.sensorId}" filterBy="#{measurement.sensor.sensorId}" filterMatchMode="contains">
+                                        <h:outputText value="#{measurement.sensor.sensorId}"/>
+                                    </p:column>
+                                    <p:column headerText="Timestamp" sortBy="#{measurement.timestamp}" filterBy="#{measurement.timestamp}" filterMatchMode="contains">
+                                        <h:outputText value="#{measurement.timestamp}"/>
+                                    </p:column>
+                                    <p:column headerText="Data Measured" sortBy="#{measurement.value}" filterBy="#{measurement.value}" filterMatchMode="contains">
+                                        <h:outputText value="#{measurement.type}"/>
+                                        <h:outputText value=" (#{measurement.value })"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                        </p:tabView>
+                    </p:tab>
+
+                    <p:tab title="Weekly-Frequency">
+                        <p:tabView>
+                            <p:tab title="&#8709;">
+                                <p:repeat value="#{sessionInfoBean.hasRole('MANAGER') ? measurementListController.doGetAllMeasurementsAllRoomsByDepartment('WEEKLY')
+                                 : sessionInfoBean.hasRole('EMPLOYEE') ? measurementListController.doGetEmployeeReport('WEEKLY')
+                                : measurementListController.doGetAllMeasurementsAllRooms('WEEKLY')}" var="room">
+                                    <p:card style="margin-top: 10px; height: 200px;">
+                                        <h:outputText value="#{room.key.roomName} &lt;br/&gt;&lt;br/&gt;" escape="false"/>
+
+                                        <div style="margin-bottom: 20px; float: left; width: 33.33%">
+
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.temperature} °C &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Temperature&lt;br/&gt;&lt;br/&gt;" escape="false"/>
+
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.lux} lux &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Light Intensity&lt;br/&gt;" escape="false"/>
+                                        </div>
+                                        <div style="margin-bottom: 20px; float: left; width: 33.33%">
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.humidity} % &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Humidity&lt;br/&gt;&lt;br/&gt;" escape="false"/>
+
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.gas} ppm &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Air Quality&lt;br/&gt;" escape="false"/>
+                                        </div>
+                                        <div style="margin-bottom: 20px; float: left; width: 33.33%">
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.decibel} db &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Noise&lt;br/&gt;&lt;br/&gt;" escape="false"/>
+
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.pressure} mbar &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Pressure&lt;br/&gt;" escape="false"/>
+                                        </div>
+
+                                    </p:card>
+                                </p:repeat>
+
+                            </p:tab>
+                            <p:tab title="Diagram">
+                                <div class="card">
+                                    <p:repeat value="#{sessionInfoBean.hasRole('MANAGER') ? graphController.createGraphAllRoomsByDepartment('WEEKLY')
+                                                            : sessionInfoBean.hasRole('EMPLOYEE') ? graphController.createGraphUserRoomsByInterval('WEEKLY')
+                                                            : graphController.createGraphAllRooms('WEEKLY')}" var="publicRoom">
+                                        <p:lineChart model="#{publicRoom}" style="width: 100%; height: 500px;"/>
+                                    </p:repeat>
+                                </div>
+
+                            </p:tab>
+                            <p:tab title="Measured Data">
+                                <p:dataTable id="measurementTable" var="measurement"
+                                             value="#{sessionInfoBean.hasRole('MANAGER') ? measurementListController.doGetAllMeasurementsByDepartment('WEEKLY')
+                                                        :sessionInfoBean.hasRole('EMPLOYEE') ? measurementListController.doGetUsersReport('WEEKLY')
+                                                        :measurementListController.doGetAllMeasurements('WEEKLY')}"
+                                             paginator="true"
+                                             rows="20" paginatorPosition="bottom"
+                                             emptyMessage="No measurements found." sortMode="multiple">
+                                    <p:column headerText="Room" sortBy="#{measurement.sensor.room.roomName}" filterBy="#{measurement.sensor.room.roomName}" filterMatchMode="contains">
+                                        <h:outputText value="#{measurement.sensor.room.roomName}"/>
+                                    </p:column>
+                                    <p:column headerText="Sensor" sortBy="#{measurement.sensor.sensorId}" filterBy="#{measurement.sensor.sensorId}" filterMatchMode="contains">
+                                        <h:outputText value="#{measurement.sensor.sensorId}"/>
+                                    </p:column>
+                                    <p:column headerText="Timestamp" sortBy="#{measurement.timestamp}" filterBy="#{measurement.timestamp}" filterMatchMode="contains">
+                                        <h:outputText value="#{measurement.timestamp}"/>
+                                    </p:column>
+                                    <p:column headerText="Data Measured" sortBy="#{measurement.value}" filterBy="#{measurement.value}" filterMatchMode="contains">
+                                        <h:outputText value="#{measurement.type}"/>
+                                        <h:outputText value=" (#{measurement.value })"/>
+                                    </p:column>
+                                </p:dataTable>
+
+
+                            </p:tab>
+                        </p:tabView>
+                    </p:tab>
+                    <p:tab title="Monthly-Frequency">
+                        <p:tabView>
+                            <p:tab title="&#8709;">
+                                <p:repeat value="#{sessionInfoBean.hasRole('MANAGER') ? measurementListController.doGetAllMeasurementsAllRoomsByDepartment('MONTHLY')
+                                 : sessionInfoBean.hasRole('EMPLOYEE') ? measurementListController.doGetEmployeeReport('MONTHLY')
+                                : measurementListController.doGetAllMeasurementsAllRooms('MONTHLY')}" var="room">
+                                    <p:card style="margin-top: 10px; height: 200px;">
+                                        <h:outputText value="#{room.key.roomName} &lt;br/&gt;&lt;br/&gt;" escape="false"/>
+
+                                        <div style="margin-bottom: 20px; float: left; width: 33.33%">
+
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.temperature} °C &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Temperature&lt;br/&gt;&lt;br/&gt;" escape="false"/>
+
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.lux} lux &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Light Intensity&lt;br/&gt;" escape="false"/>
+                                        </div>
+                                        <div style="margin-bottom: 20px; float: left; width: 33.33%">
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.humidity} % &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Humidity&lt;br/&gt;&lt;br/&gt;" escape="false"/>
+
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.gas} ppm &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Air Quality&lt;br/&gt;" escape="false"/>
+                                        </div>
+                                        <div style="margin-bottom: 20px; float: left; width: 33.33%">
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.decibel} db &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Noise&lt;br/&gt;&lt;br/&gt;" escape="false"/>
+
+                                            <h:outputText value="&#8709;   "/>
+                                            <h:outputText value="#{averageCalculatorReport.calculateAverages(room.value); averageCalculatorReport.pressure} mbar &lt;br/&gt;" escape="false"/>
+                                            <h:outputText value="Pressure&lt;br/&gt;" escape="false"/>
+                                        </div>
+
+                                    </p:card>
+                                </p:repeat>
+
+                            </p:tab>
+                            <p:tab title="Diagram">
+                                <div class="card">
+                                    <p:repeat value="#{sessionInfoBean.hasRole('MANAGER') ? graphController.createGraphAllRoomsByDepartment('MONTHLY')
+                                                            : sessionInfoBean.hasRole('EMPLOYEE') ? graphController.createGraphUserRoomsByInterval('MONTHLY')
+                                                            : graphController.createGraphAllRooms('MONTHLY')}" var="publicRoom">
+                                        <p:lineChart model="#{publicRoom}" style="width: 100%; height: 500px;"/>
+                                    </p:repeat>
+                                </div>
+
+                            </p:tab>
+                            <p:tab title="Measured Data">
+                                <p:dataTable id="measurementTable" var="measurement"
+                                             value="#{sessionInfoBean.hasRole('MANAGER') ? measurementListController.doGetAllMeasurementsByDepartment('MONTHLY')
+                                                        :sessionInfoBean.hasRole('EMPLOYEE') ? measurementListController.doGetUsersReport('MONTHLY')
+                                                        :measurementListController.doGetAllMeasurements('MONTHLY')}"
+                                             paginator="true"
+                                             rows="20" paginatorPosition="bottom"
+                                             emptyMessage="No measurements found." sortMode="multiple">
+                                    <p:column headerText="Room" sortBy="#{measurement.sensor.room.roomName}" filterBy="#{measurement.sensor.room.roomName}" filterMatchMode="contains">
+                                        <h:outputText value="#{measurement.sensor.room.roomName}"/>
+                                    </p:column>
+                                    <p:column headerText="Sensor" sortBy="#{measurement.sensor.sensorId}" filterBy="#{measurement.sensor.sensorId}" filterMatchMode="contains">
+                                        <h:outputText value="#{measurement.sensor.sensorId}"/>
+                                    </p:column>
+                                    <p:column headerText="Timestamp" sortBy="#{measurement.timestamp}" filterBy="#{measurement.timestamp}" filterMatchMode="contains">
+                                        <h:outputText value="#{measurement.timestamp}"/>
+                                    </p:column>
+                                    <p:column headerText="Data Measured" sortBy="#{measurement.value}" filterBy="#{measurement.value}" filterMatchMode="contains">
+                                        <h:outputText value="#{measurement.type}"/>
+                                        <h:outputText value=" (#{measurement.value })"/>
+                                    </p:column>
+                                </p:dataTable>
+
+
+                            </p:tab>
+                        </p:tabView>
+                    </p:tab>
+                </p:tabView>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" width="300">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"
+                                     style="background-color:#D2BEFF; border-color:transparent"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"
+                                     style="background-color:#D2BEFF; border-color:transparent"/>
+                </p:confirmDialog>
+                <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false"
+                          header="Initializing Measurement Test Data on progress">
+
+                    <div class="p-text-center">
+                        <i class="pi pi-spin pi-spinner loading-icon" aria-hidden="true"></i>
+                    </div>
+                </p:dialog>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>

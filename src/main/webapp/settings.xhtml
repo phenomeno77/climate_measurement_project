@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/main.xhtml">
+
+    <ui:define name="content">
+
+        <div>
+            <h2 style="color:white; font-family: sans-serif; font-weight: normal; padding-left: 10px;">Settings</h2>
+        </div>
+
+        <p:card>
+            <h:form id="userMailSettings" >
+                <p:growl id="mailMsgs" showDetail="true"/>
+
+                <h3 style="color:white; font-family: sans-serif; font-weight: normal;">Mail</h3>
+                <p:outputPanel id="mailSettings" rendered="#{not empty userSettingsController.currentUser}">
+                    <h:panelGrid columns="5">
+                        <h:outputText value="Report frequency" style="padding-right: 40px"/>
+                        <p:selectOneRadio id="mailFrequency"
+                                          value="#{userSettingsController.currentUser.mailSettings}"
+                                          valueChangeListener="#{userSettingsController.selectMailIntervalListener}">
+                            <f:selectItem itemLabel="daily" itemValue="DAILY"/>
+                            <f:selectItem itemLabel="weekly" itemValue="WEEKLY"/>
+                            <f:selectItem itemLabel="monthly" itemValue="MONTHLY"/>
+                            <f:selectItem itemLabel="off" itemValue="OFF"/>
+                            <p:ajax event="change" update=":userMailSettings:mailSettings"/>
+                        </p:selectOneRadio>
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" style="margin-top: 15px">
+                        <h:outputText value="Email address" style="padding-right: 70px"/>
+                        <p:inputText value="#{userSettingsController.currentUser.email}" style="margin-right: 5px"/>
+                        <p:commandButton value="Change address" action="#{userSettingsController.doChangeEmailAddress()}" update=":userMailSettings:mailSettings mailMsgs" style="background-color:#D2BEFF; border-color:transparent"/>
+                    </h:panelGrid>
+                </p:outputPanel>
+            </h:form>
+        </p:card>
+
+        <p:card style="margin-top: 10px">
+            <h:form id="userPasswordReset">
+                <p:growl id="passwordMsgs" showDetail="true"/>
+                <h3 style="color:white; font-family: sans-serif; font-weight: normal;">Reset Password</h3>
+                <p:outputPanel id="passwordReset" rendered="#{not empty userSettingsController.currentUser}">
+                    <h:panelGrid columns="2" rendered="#{not userSettingsController.resetPassword}">
+                        <h:outputText value="Current password"/>
+                        <p:inputText value="#{userSettingsController.password}" type="password"/>
+                        <p:commandButton value="Reset password" action="#{userSettingsController.doResetPassword()}" update="@form passwordMsgs" style="background-color:#D2BEFF; border-color:transparent"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" id="resetPassword" rendered="#{userSettingsController.resetPassword}">
+                        <h:outputText value="Enter new password"/>
+                        <p:inputText value="#{userSettingsController.password}" type="password"/>
+                        <h:outputText value="Enter new password again"/>
+                        <p:inputText value="#{userSettingsController.passwordVerifier}" type="password"/>
+                        <p:commandButton value="Save new password" action="#{userSettingsController.doChangePassword()}" update=":userPasswordReset:passwordReset passwordMsgs" style="background-color:#D2BEFF; border-color:transparent"/>
+                    </h:panelGrid>
+                </p:outputPanel>
+            </h:form>
+        </p:card>
+
+        <p:card style="margin-top: 10px">
+
+            <div class="card">
+                <h:form>
+                    <p:growl id="messages" showDetail="true"/>
+
+                    <p:schedule id="schedule" value="#{absenceSchedulerController.eventModel}" widgetVar="myschedule">
+                        <p:ajax event="dateSelect" listener="#{absenceSchedulerController.onDateSelect}" update="eventDetails"
+                                oncomplete="PF('eventDialog').show();"/>
+                        <p:ajax event="eventSelect" listener="#{absenceSchedulerController.onEventSelect}" update="eventDetails"
+                                oncomplete="PF('eventDialog').show();"/>
+                        <p:ajax event="eventMove" listener="#{absenceSchedulerController.onEventMove}" update="messages"/>
+                        <p:ajax event="eventResize" listener="#{absenceSchedulerController.onEventResize}" update="messages"/>
+                    </p:schedule>
+
+                    <p:dialog widgetVar="eventDialog" header="Event Details" showEffect="fade" hideEffect="fade">
+                        <h:panelGrid id="eventDetails" columns="2" cellpadding="7">
+                            <p:outputLabel for="title" value="Titles" styleClass="p-text-bold"/>
+                            <p:selectOneMenu id="title" value="#{absenceSchedulerController.event.title}" dynamic="true">
+                                <f:selectItem itemLabel="VACATION" itemValue="VACATION"/>
+                                <f:selectItem itemLabel="SICK" itemValue="SICK"/>
+                                <f:selectItem itemLabel="OTHER" itemValue="OTHER"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="from" value="From" styleClass="p-text-bold"/>
+                            <p:datePicker id="from" value="#{absenceSchedulerController.event.startDate}" pattern="dd/MM/yyyy"
+                                          showTime="true" appendTo="@(body)"/>
+
+                            <p:outputLabel for="to" value="To" styleClass="p-text-bold"/>
+                            <p:datePicker id="to" value="#{absenceSchedulerController.event.endDate}" pattern="dd/MM/yyyy"
+                                          showTime="true" appendTo="@(body)"/>
+
+                            <p:outputLabel for="allDay" value="All Day" styleClass="p-text-bold"/>
+                            <h:selectBooleanCheckbox id="allDay" value="#{absenceSchedulerController.event.allDay}"/>
+                        </h:panelGrid>
+
+                        <div class="p-d-flex p-jc-between p-mt-3">
+                            <p:commandButton type="reset" value="Reset" styleClass="p-text-bold ui-button-outlined"/>
+                            <p:commandButton id="addButton" value="Save" action="#{absenceSchedulerController.addEvent}"
+                                             oncomplete="PF('myschedule').update();PF('eventDialog').hide();location.href='/settings.xhtml'"/>
+                            <p:commandButton  value="Delete" styleClass="p-text-bold ui-button-outlined"
+                                              oncomplete="PF('myschedule').update();PF('eventDialog').hide();" actionListener="#{absenceSchedulerController.onEventDelete}">
+                                <f:param name="eventId" value="#{absenceSchedulerController.event.id}" />
+                            </p:commandButton>
+
+                        </div>
+                    </p:dialog>
+                </h:form>
+            </div>
+        </p:card>
+
+    </ui:define>
+</ui:composition>

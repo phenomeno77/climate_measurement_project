@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xml:lang="en">
+
+    <h:head>
+        <title>Skeleton</title>
+            <h:outputStylesheet library="webjars" name="primeflex/2.0.0/primeflex.min.css" />
+            <h:outputStylesheet library="primefaces-arya" name="theme.css" />
+            <h:outputStylesheet library="css" name="style.css" />
+
+        <!-- js-utils here -->
+            <h:outputScript library="js" name="chat.js" />
+    </h:head>
+
+    <h:body style="margin:10px; background-color:#121212">
+
+        <div id="page">
+
+            <div id="layout-header" class="navbar-fixed-top" style="height:60px; background-color:#1e1e1e; border: 1px solid transparent; border-radius: 4px; ">
+                <ui:include src="/WEB-INF/includes/header.xhtml"/>
+            </div>
+
+            <div class="p-grid" style="margin-top: 5px;">
+                <div id="menu" class="p-col-fixed" style="width:auto;">
+                    <ui:include src="/WEB-INF/includes/menu.xhtml" />
+                </div>
+
+                <div id="content" class="p-col">
+                    <ui:insert name="content">Content</ui:insert>
+                </div>
+            </div>
+
+            <div id="footer" class="navbar-fixed-bottom" style="margin-top: 5px;">
+                <ui:include src="/WEB-INF/includes/footer.xhtml" />
+            </div>
+        </div>
+
+    </h:body>
+</html>

@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3c.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/main.xhtml">
+
+    <ui:define name="content">
+        <h:form id="auditLogs" >
+            <p:dataTable id="auditLogs" var="audit"
+                         value="#{sessionInfoBean.hasRole('MANAGER')?auditLogListController.allAuditLogByDepartmentManager:auditLogListController.allAuditLog}"
+                         emptyMessage="No logs found." sortMode="multiple"
+                         paginator="true"
+                         rows="20" paginatorPosition="bottom">
+                <p:column headerText="Log ID" sortBy="#{audit.auditLogId}" filterBy="#{audit.auditLogId}" filterMatchMode="contains">
+                    <h:outputText value="#{audit.auditLogId}"/>
+                </p:column>
+                <p:column headerText="Username" sortBy="#{audit.user}" filterBy="#{audit.user}" filterMatchMode="contains">
+                    <h:outputText value="#{audit.user}"/>
+                </p:column>
+                <p:column headerText="Event" sortBy="#{audit.event}" filterBy="#{audit.event}" filterMatchMode="contains">
+                    <h:outputText value="#{audit.event}"/>
+                </p:column>
+                <p:column headerText="Timestamp" sortBy="#{audit.timeStamp}" filterBy="#{audit.timeStamp}" filterMatchMode="contains">
+                    <h:outputText value="#{audit.timeStamp}"/>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+
+    </ui:define>
+</ui:composition>
